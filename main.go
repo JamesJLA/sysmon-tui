@@ -138,7 +138,7 @@ func (m model) View() string {
 
 	return tabBorder.Render(
 		lipgloss.JoinVertical(lipgloss.Left,
-			headerStyle.Render("🖥️  System Monitor TUI"),
+			headerStyle.Render("System Monitor TUI"),
 			"",
 			tabRow,
 			"",
@@ -185,40 +185,50 @@ func (m model) renderSystemTab() string {
 		),
 		"",
 		lipgloss.JoinHorizontal(lipgloss.Top,
-			valueStyle.Render(fmt.Sprintf("Load Avg: %.2f %.2f %.2f", m.loadStat.Load1, m.loadStat.Load5, m.loadStat.Load15)),
+			func() string {
+				if m.loadStat != nil {
+					return valueStyle.Render(fmt.Sprintf("Load Avg: %.2f %.2f %.2f", m.loadStat.Load1, m.loadStat.Load5, m.loadStat.Load15))
+				}
+				return valueStyle.Render("Load Avg: Loading...")
+			}(),
 		),
 	)
 	return tabBorder.Render(content)
 }
 
 func (m model) renderCPUTab() string {
-	var cpuDetails string
-	if len(m.cpuInfo) > 0 {
-		cpu := m.cpuInfo[0]
-		cpuDetails = lipgloss.JoinVertical(lipgloss.Left,
-			headerStyle.Render("CPU Information"),
-			"",
-			lipgloss.JoinHorizontal(lipgloss.Top,
-				valueStyle.Render(fmt.Sprintf("Model: %s", cpu.ModelName)),
-			),
-			"",
-			lipgloss.JoinHorizontal(lipgloss.Top,
-				valueStyle.Render(fmt.Sprintf("Cores: %d", cpu.Cores)),
-				"  ",
-				valueStyle.Render(fmt.Sprintf("Mhz: %.0f", cpu.Mhz)),
-			),
-			"",
-			lipgloss.JoinHorizontal(lipgloss.Top,
-				valueStyle.Render(fmt.Sprintf("Usage: %.1f%%", m.cpuPercent)),
-				"  ",
-				valueStyle.Render(m.renderCPUBar(m.cpuPercent)),
-			),
-		)
+	if len(m.cpuInfo) == 0 {
+		return tabBorder.Render(valueStyle.Render("Loading CPU information..."))
 	}
+
+	cpu := m.cpuInfo[0]
+	cpuDetails := lipgloss.JoinVertical(lipgloss.Left,
+		headerStyle.Render("CPU Information"),
+		"",
+		lipgloss.JoinHorizontal(lipgloss.Top,
+			valueStyle.Render(fmt.Sprintf("Model: %s", cpu.ModelName)),
+		),
+		"",
+		lipgloss.JoinHorizontal(lipgloss.Top,
+			valueStyle.Render(fmt.Sprintf("Cores: %d", cpu.Cores)),
+			"  ",
+			valueStyle.Render(fmt.Sprintf("Mhz: %.0f", cpu.Mhz)),
+		),
+		"",
+		lipgloss.JoinHorizontal(lipgloss.Top,
+			valueStyle.Render(fmt.Sprintf("Usage: %.1f%%", m.cpuPercent)),
+			"  ",
+			valueStyle.Render(m.renderCPUBar(m.cpuPercent)),
+		),
+	)
 	return tabBorder.Render(cpuDetails)
 }
 
 func (m model) renderMemoryTab() string {
+	if m.memInfo == nil {
+		return tabBorder.Render(valueStyle.Render("Loading memory information..."))
+	}
+
 	memContent := lipgloss.JoinVertical(lipgloss.Left,
 		headerStyle.Render("Memory Information"),
 		"",
@@ -244,88 +254,91 @@ func (m model) renderMemoryTab() string {
 }
 
 func (m model) renderDiskTab() string {
-	var diskContent string
-	if len(m.diskInfo) > 0 {
-		disk := m.diskInfo[0]
-		diskContent = lipgloss.JoinVertical(lipgloss.Left,
-			headerStyle.Render("Disk Information"),
-			"",
-			lipgloss.JoinHorizontal(lipgloss.Top,
-				valueStyle.Render(fmt.Sprintf("Mountpoint: %s", disk.Path)),
-				"  ",
-				valueStyle.Render(fmt.Sprintf("Filesystem: %s", disk.Fstype)),
-			),
-			"",
-			lipgloss.JoinHorizontal(lipgloss.Top,
-				valueStyle.Render(fmt.Sprintf("Total: %s", formatBytes(disk.Total))),
-				"  ",
-				valueStyle.Render(fmt.Sprintf("Free: %s", formatBytes(disk.Free))),
-			),
-			"",
-			lipgloss.JoinHorizontal(lipgloss.Top,
-				valueStyle.Render(fmt.Sprintf("Used: %s (%.1f%%)", formatBytes(disk.Used), disk.UsedPercent)),
-			),
-			"",
-			m.renderDiskBar(disk.UsedPercent),
-		)
+	if len(m.diskInfo) == 0 {
+		return tabBorder.Render(valueStyle.Render("Loading disk information..."))
 	}
+
+	disk := m.diskInfo[0]
+	diskContent := lipgloss.JoinVertical(lipgloss.Left,
+		headerStyle.Render("Disk Information"),
+		"",
+		lipgloss.JoinHorizontal(lipgloss.Top,
+			valueStyle.Render(fmt.Sprintf("Mountpoint: %s", disk.Path)),
+			"  ",
+			valueStyle.Render(fmt.Sprintf("Filesystem: %s", disk.Fstype)),
+		),
+		"",
+		lipgloss.JoinHorizontal(lipgloss.Top,
+			valueStyle.Render(fmt.Sprintf("Total: %s", formatBytes(disk.Total))),
+			"  ",
+			valueStyle.Render(fmt.Sprintf("Free: %s", formatBytes(disk.Free))),
+		),
+		"",
+		lipgloss.JoinHorizontal(lipgloss.Top,
+			valueStyle.Render(fmt.Sprintf("Used: %s (%.1f%%)", formatBytes(disk.Used), disk.UsedPercent)),
+		),
+		"",
+		m.renderDiskBar(disk.UsedPercent),
+	)
 	return tabBorder.Render(diskContent)
 }
 
 func (m model) renderNetworkTab() string {
-	var netContent string
-	if len(m.netInfo) > 0 {
-		net := m.netInfo[0]
-		netContent = lipgloss.JoinVertical(lipgloss.Left,
-			headerStyle.Render("Network Information"),
-			"",
-			lipgloss.JoinHorizontal(lipgloss.Top,
-				valueStyle.Render(fmt.Sprintf("Interface: %s", net.Name)),
-			),
-			"",
-			lipgloss.JoinHorizontal(lipgloss.Top,
-				valueStyle.Render(fmt.Sprintf("Bytes Sent: %s", formatBytes(net.BytesSent))),
-				"  ",
-				valueStyle.Render(fmt.Sprintf("Bytes Recv: %s", formatBytes(net.BytesRecv))),
-			),
-			"",
-			lipgloss.JoinHorizontal(lipgloss.Top,
-				valueStyle.Render(fmt.Sprintf("Packets Sent: %d", net.PacketsSent)),
-				"  ",
-				valueStyle.Render(fmt.Sprintf("Packets Recv: %d", net.PacketsRecv)),
-			),
-		)
+	if len(m.netInfo) == 0 {
+		return tabBorder.Render(valueStyle.Render("Loading network information..."))
 	}
+
+	net := m.netInfo[0]
+	netContent := lipgloss.JoinVertical(lipgloss.Left,
+		headerStyle.Render("Network Information"),
+		"",
+		lipgloss.JoinHorizontal(lipgloss.Top,
+			valueStyle.Render(fmt.Sprintf("Interface: %s", net.Name)),
+		),
+		"",
+		lipgloss.JoinHorizontal(lipgloss.Top,
+			valueStyle.Render(fmt.Sprintf("Bytes Sent: %s", formatBytes(net.BytesSent))),
+			"  ",
+			valueStyle.Render(fmt.Sprintf("Bytes Recv: %s", formatBytes(net.BytesRecv))),
+		),
+		"",
+		lipgloss.JoinHorizontal(lipgloss.Top,
+			valueStyle.Render(fmt.Sprintf("Packets Sent: %d", net.PacketsSent)),
+			"  ",
+			valueStyle.Render(fmt.Sprintf("Packets Recv: %d", net.PacketsRecv)),
+		),
+	)
 	return tabBorder.Render(netContent)
 }
 
 func (m model) renderProcessesTab() string {
-	var procContent string
-	if len(m.processes) > 0 {
-		procContent = lipgloss.JoinVertical(lipgloss.Left,
-			headerStyle.Render(fmt.Sprintf("Top %d Processes", len(m.processes))),
-			"",
-		)
+	if len(m.processes) == 0 {
+		return tabBorder.Render(valueStyle.Render("Loading process information..."))
+	}
 
-		for i, proc := range m.processes {
-			if i >= 10 { // Show top 10
-				break
-			}
-			name, _ := proc.Name()
-			pid := proc.Pid
-			cpuPercent, _ := proc.CPUPercent()
-			memInfo, _ := proc.MemoryInfo()
+	procContent := lipgloss.JoinVertical(lipgloss.Left,
+		headerStyle.Render(fmt.Sprintf("Top %d Processes", len(m.processes))),
+		"",
+	)
 
-			procContent = lipgloss.JoinVertical(lipgloss.Left, procContent,
-				lipgloss.JoinHorizontal(lipgloss.Top,
-					valueStyle.Render(fmt.Sprintf("%s [%d]", name, pid)),
-					"  ",
-					valueStyle.Render(fmt.Sprintf("CPU: %.1f%%", cpuPercent)),
-					"  ",
-					valueStyle.Render(fmt.Sprintf("Mem: %s", formatBytes(memInfo.RSS))),
-				),
-			)
+	for i, proc := range m.processes {
+		if i >= 10 { // Show top 10
+			break
 		}
+		name, _ := proc.Name()
+		pid := proc.Pid
+		cpuPercent, _ := proc.CPUPercent()
+		memInfo, _ := proc.MemoryInfo()
+
+		procContent = lipgloss.JoinVertical(lipgloss.Left, procContent,
+			lipgloss.JoinHorizontal(lipgloss.Top,
+				valueStyle.Render(fmt.Sprintf("%s [%d]", name, pid)),
+				"  ",
+				valueStyle.Render(fmt.Sprintf("CPU: %.1f%%", cpuPercent)),
+				"  ",
+				valueStyle.Render(fmt.Sprintf("Mem: %s", formatBytes(memInfo.RSS))),
+			),
+		)
 	}
 	return tabBorder.Render(procContent)
 }
