@@ -112,11 +112,25 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 var (
-	tabBorder   = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Padding(0, 1)
-	activeTab   = lipgloss.NewStyle().Foreground(lipgloss.Color("212")).Bold(true)
+	// Fixed width for consistent layout
+	fixedWidth = 80
+
+	// Consistent border styling
+	mainBorder    = lipgloss.NewStyle().Border(lipgloss.NormalBorder()).Padding(0, 1).Width(fixedWidth)
+	contentBorder = lipgloss.NewStyle().Border(lipgloss.NormalBorder()).Padding(0, 1).Width(fixedWidth - 4)
+
+	// Tab styling
+	activeTab   = lipgloss.NewStyle().Foreground(lipgloss.Color("212")).Bold(true).Background(lipgloss.Color("236"))
 	tabInactive = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
-	headerStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("39"))
-	valueStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("15"))
+
+	// Color themes for different metrics
+	headerStyle  = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("39"))
+	valueStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("15"))
+	cpuStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("46"))
+	memStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("196"))
+	diskStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("208"))
+	netStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("33"))
+	processStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("141"))
 )
 
 func (m model) View() string {
@@ -124,6 +138,7 @@ func (m model) View() string {
 		return "Thanks for using sysmon-tui!\n"
 	}
 
+	// Render tabs
 	var tabs []string
 	for i, t := range m.tabs {
 		style := tabInactive
@@ -132,11 +147,12 @@ func (m model) View() string {
 		}
 		tabs = append(tabs, style.Render(t))
 	}
-
 	tabRow := lipgloss.JoinHorizontal(lipgloss.Top, tabs...)
+
+	// Render content with consistent styling
 	content := m.renderTabContent()
 
-	return tabBorder.Render(
+	return mainBorder.Render(
 		lipgloss.JoinVertical(lipgloss.Left,
 			headerStyle.Render("System Monitor TUI"),
 			"",
@@ -193,12 +209,12 @@ func (m model) renderSystemTab() string {
 			}(),
 		),
 	)
-	return tabBorder.Render(content)
+	return contentBorder.Render(content)
 }
 
 func (m model) renderCPUTab() string {
 	if len(m.cpuInfo) == 0 {
-		return tabBorder.Render(valueStyle.Render("Loading CPU information..."))
+		return contentBorder.Render(valueStyle.Render("Loading CPU information..."))
 	}
 
 	cpu := m.cpuInfo[0]
@@ -218,15 +234,15 @@ func (m model) renderCPUTab() string {
 		lipgloss.JoinHorizontal(lipgloss.Top,
 			valueStyle.Render(fmt.Sprintf("Usage: %.1f%%", m.cpuPercent)),
 			"  ",
-			valueStyle.Render(m.renderCPUBar(m.cpuPercent)),
+			cpuStyle.Render(m.renderCPUBar(m.cpuPercent)),
 		),
 	)
-	return tabBorder.Render(cpuDetails)
+	return contentBorder.Render(cpuDetails)
 }
 
 func (m model) renderMemoryTab() string {
 	if m.memInfo == nil {
-		return tabBorder.Render(valueStyle.Render("Loading memory information..."))
+		return contentBorder.Render(valueStyle.Render("Loading memory information..."))
 	}
 
 	memContent := lipgloss.JoinVertical(lipgloss.Left,
@@ -242,7 +258,7 @@ func (m model) renderMemoryTab() string {
 			valueStyle.Render(fmt.Sprintf("Used: %s (%.1f%%)", formatBytes(m.memInfo.Used), m.memInfo.UsedPercent)),
 		),
 		"",
-		m.renderMemBar(m.memInfo.UsedPercent),
+		memStyle.Render(m.renderMemBar(m.memInfo.UsedPercent)),
 		"",
 		lipgloss.JoinHorizontal(lipgloss.Top,
 			valueStyle.Render(fmt.Sprintf("Cached: %s", formatBytes(m.memInfo.Cached))),
@@ -250,12 +266,12 @@ func (m model) renderMemoryTab() string {
 			valueStyle.Render(fmt.Sprintf("Buffers: %s", formatBytes(m.memInfo.Buffers))),
 		),
 	)
-	return tabBorder.Render(memContent)
+	return contentBorder.Render(memContent)
 }
 
 func (m model) renderDiskTab() string {
 	if len(m.diskInfo) == 0 {
-		return tabBorder.Render(valueStyle.Render("Loading disk information..."))
+		return contentBorder.Render(valueStyle.Render("Loading disk information..."))
 	}
 
 	disk := m.diskInfo[0]
@@ -278,14 +294,14 @@ func (m model) renderDiskTab() string {
 			valueStyle.Render(fmt.Sprintf("Used: %s (%.1f%%)", formatBytes(disk.Used), disk.UsedPercent)),
 		),
 		"",
-		m.renderDiskBar(disk.UsedPercent),
+		diskStyle.Render(m.renderDiskBar(disk.UsedPercent)),
 	)
-	return tabBorder.Render(diskContent)
+	return contentBorder.Render(diskContent)
 }
 
 func (m model) renderNetworkTab() string {
 	if len(m.netInfo) == 0 {
-		return tabBorder.Render(valueStyle.Render("Loading network information..."))
+		return contentBorder.Render(valueStyle.Render("Loading network information..."))
 	}
 
 	net := m.netInfo[0]
@@ -308,12 +324,12 @@ func (m model) renderNetworkTab() string {
 			valueStyle.Render(fmt.Sprintf("Packets Recv: %d", net.PacketsRecv)),
 		),
 	)
-	return tabBorder.Render(netContent)
+	return contentBorder.Render(netContent)
 }
 
 func (m model) renderProcessesTab() string {
 	if len(m.processes) == 0 {
-		return tabBorder.Render(valueStyle.Render("Loading process information..."))
+		return contentBorder.Render(valueStyle.Render("Loading process information..."))
 	}
 
 	procContent := lipgloss.JoinVertical(lipgloss.Left,
@@ -332,19 +348,19 @@ func (m model) renderProcessesTab() string {
 
 		procContent = lipgloss.JoinVertical(lipgloss.Left, procContent,
 			lipgloss.JoinHorizontal(lipgloss.Top,
-				valueStyle.Render(fmt.Sprintf("%s [%d]", name, pid)),
+				processStyle.Render(fmt.Sprintf("%s [%d]", name, pid)),
 				"  ",
-				valueStyle.Render(fmt.Sprintf("CPU: %.1f%%", cpuPercent)),
+				cpuStyle.Render(fmt.Sprintf("CPU: %.1f%%", cpuPercent)),
 				"  ",
-				valueStyle.Render(fmt.Sprintf("Mem: %s", formatBytes(memInfo.RSS))),
+				memStyle.Render(fmt.Sprintf("Mem: %s", formatBytes(memInfo.RSS))),
 			),
 		)
 	}
-	return tabBorder.Render(procContent)
+	return contentBorder.Render(procContent)
 }
 
 func (m model) renderCPUBar(percent float64) string {
-	barWidth := 30
+	barWidth := 20
 	filled := int(percent * float64(barWidth) / 100)
 	bar := ""
 	for i := 0; i < barWidth; i++ {
@@ -354,11 +370,11 @@ func (m model) renderCPUBar(percent float64) string {
 			bar += "░"
 		}
 	}
-	return lipgloss.NewStyle().Foreground(lipgloss.Color("46")).Render(bar)
+	return bar
 }
 
 func (m model) renderMemBar(percent float64) string {
-	barWidth := 30
+	barWidth := 20
 	filled := int(percent * float64(barWidth) / 100)
 	bar := ""
 	for i := 0; i < barWidth; i++ {
@@ -368,11 +384,11 @@ func (m model) renderMemBar(percent float64) string {
 			bar += "░"
 		}
 	}
-	return lipgloss.NewStyle().Foreground(lipgloss.Color("196")).Render(bar)
+	return bar
 }
 
 func (m model) renderDiskBar(percent float64) string {
-	barWidth := 30
+	barWidth := 20
 	filled := int(percent * float64(barWidth) / 100)
 	bar := ""
 	for i := 0; i < barWidth; i++ {
@@ -382,7 +398,7 @@ func (m model) renderDiskBar(percent float64) string {
 			bar += "░"
 		}
 	}
-	return lipgloss.NewStyle().Foreground(lipgloss.Color("208")).Render(bar)
+	return bar
 }
 
 func formatBytes(bytes uint64) string {

@@ -2,6 +2,7 @@
 
 A lightweight system monitoring tool with an interactive terminal interface.
 
+<<<<<<< HEAD
 ## Demo
 
 ```
@@ -56,6 +57,9 @@ A lightweight system monitoring tool with an interactive terminal interface.
 │  Controls: ← → or Tab to switch | R to refresh | Q to quit                          │
 ╰─────────────────────────────────────────────────────────────────────────────────────╯
 ```
+=======
+![System Monitor TUI Demo](sysmon-tui-demo.png)
+>>>>>>> 8c3cf23 (demo)
 
 ## Features
 
@@ -74,6 +78,8 @@ A lightweight system monitoring tool with an interactive terminal interface.
 ```bash
 git clone https://github.com/yourusername/sysmon-tui.git
 cd sysmon-tui
+go mod init sysmon-tui
+go mod tidy
 go build -o sysmon-tui main.go
 cp sysmon-tui ~/.local/bin/
 ```
@@ -86,7 +92,7 @@ go install github.com/yourusername/sysmon-tui@latest
 ## Usage
 
 ```bash
-# Launch the interactive TUI
+# Launch interactive TUI
 sysmon-tui
 
 # Navigation
