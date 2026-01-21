@@ -6,54 +6,54 @@ A lightweight system monitoring tool with an interactive terminal interface.
 
 ```
 ╭─────────────────────────────────────────────────────────────────────────────────────╮
-│                              System Monitor TUI                                    │
+│                              System Monitor TUI                                     │
 │                                                                                     │
-│  System   CPU   Memory   Disk   Network   Processes                               │
+│  System   CPU   Memory   Disk   Network   Processes                                 │
 │                                                                                     │
-│  ╭─────────────────────────────────────────────────────────────────────╮           │
-│  │ System Information                                                 │           │
-│  │ Hostname: omarchy            Platform: linux                        │           │
-│  │ OS: linux 6.5.0-27-generic   Uptime: 11h 0m                        │           │
-│  │ Load Avg: 0.86 1.30 1.55                                        │           │
-│  ╰─────────────────────────────────────────────────────────────────────╯           │
+│  ╭─────────────────────────────────────────────────────────────────────╮            │
+│  │ System Information                                                  │            │
+│  │ Hostname: omarchy            Platform: linux                        │            │
+│  │ OS: linux 6.5.0-27-generic   Uptime: 11h 0m                         │            │
+│  │ Load Avg: 0.86 1.30 1.55                                            │            │
+│  ╰─────────────────────────────────────────────────────────────────────╯            │
 │                                                                                     │
-│  Controls: ← → or Tab to switch | R to refresh | Q to quit                        │
+│  Controls: ← → or Tab to switch | R to refresh | Q to quit                          │
 ╰─────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ```
 ╭─────────────────────────────────────────────────────────────────────────────────────╮
-│                              System Monitor TUI                                    │
+│                              System Monitor TUI                                     │
 │                                                                                     │
-│  System   CPU   Memory   Disk   Network   Processes                               │
+│  System   CPU   Memory   Disk   Network   Processes                                 │
 │                                                                                     │
-│  ╭─────────────────────────────────────────────────────────────────────╮           │
-│  │ CPU Information                                                    │           │
-│  │ Model: AMD Ryzen 7 7730U with Radeon Graphics                     │           │
-│  │ Cores: 8                    Mhz: 2800                              │           │
-│  │ Usage: 12.3%                 ████████████████████████████░░░░░░░░   │           │
-│  ╰─────────────────────────────────────────────────────────────────────╯           │
+│  ╭─────────────────────────────────────────────────────────────────────╮            │
+│  │ CPU Information                                                     │            │
+│  │ Model: AMD Ryzen 7 7730U with Radeon Graphics                       │            │
+│  │ Cores: 8                    Mhz: 2800                               │            │
+│  │ Usage: 12.3%                 ████████████████████████████░░░░░░░░   │            │
+│  ╰─────────────────────────────────────────────────────────────────────╯            │
 │                                                                                     │
-│  Controls: ← → or Tab to switch | R to refresh | Q to quit                        │
+│  Controls: ← → or Tab to switch | R to refresh | Q to quit                          │
 ╰─────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ```
 ╭─────────────────────────────────────────────────────────────────────────────────────╮
-│                              System Monitor TUI                                    │
+│                              System Monitor TUI                                     │
 │                                                                                     │
-│  System   CPU   Memory   Disk   Network   Processes                               │
+│  System   CPU   Memory   Disk   Network   Processes                                 │
 │                                                                                     │
-│  ╭─────────────────────────────────────────────────────────────────────╮           │
-│  │ Top Processes                                                      │           │
-│  │ chrome [1234]               CPU: 45.2%    Mem: 856.2 MB            │           │
-│  │ firefox [5678]               CPU: 23.1%    Mem: 642.1 MB            │           │
-│  │ vscode [9012]                CPU: 12.8%    Mem: 432.7 MB            │           │
-│  │ node [3456]                  CPU: 8.4%     Mem: 128.3 MB            │           │
-│  │ docker [7890]                CPU: 6.2%     Mem: 256.8 MB            │           │
-│  ╰─────────────────────────────────────────────────────────────────────╯           │
+│  ╭─────────────────────────────────────────────────────────────────────╮            │
+│  │ Top Processes                                                       │            │ 
+│  │ chrome [1234]               CPU: 45.2%    Mem: 856.2 MB             │            │
+│  │ firefox [5678]               CPU: 23.1%    Mem: 642.1 MB            │            │
+│  │ vscode [9012]                CPU: 12.8%    Mem: 432.7 MB            │            │
+│  │ node [3456]                  CPU: 8.4%     Mem: 128.3 MB            │            │
+│  │ docker [7890]                CPU: 6.2%     Mem: 256.8 MB            │            │
+│  ╰─────────────────────────────────────────────────────────────────────╯            │
 │                                                                                     │
-│  Controls: ← → or Tab to switch | R to refresh | Q to quit                        │
+│  Controls: ← → or Tab to switch | R to refresh | Q to quit                          │
 ╰─────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
