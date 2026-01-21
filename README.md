@@ -2,9 +2,6 @@
 
 A lightweight system monitoring tool with an interactive terminal interface.
 
-<<<<<<< HEAD
-## Demo
-
 ```
 ╭─────────────────────────────────────────────────────────────────────────────────────╮
 │                              System Monitor TUI                                     │
@@ -58,8 +55,6 @@ A lightweight system monitoring tool with an interactive terminal interface.
 ╰─────────────────────────────────────────────────────────────────────────────────────╯
 ```
 =======
-![System Monitor TUI Demo](sysmon-tui-demo.png)
->>>>>>> 8c3cf23 (demo)
 
 ## Features
 
