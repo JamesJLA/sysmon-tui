@@ -71,7 +71,7 @@ A lightweight system monitoring tool with an interactive terminal interface.
 
 ### From Source
 ```bash
-git clone https://github.com/yourusername/sysmon-tui.git
+git clone https://github.com/JamesJLA/sysmon-tui.git
 cd sysmon-tui
 go mod init sysmon-tui
 go mod tidy
@@ -81,7 +81,7 @@ cp sysmon-tui ~/.local/bin/
 
 ### Go Install
 ```bash
-go install github.com/yourusername/sysmon-tui@latest
+go install github.com/JamesJLA/sysmon-tui@latest
 ```
 
 ## Usage
